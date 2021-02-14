@@ -1,0 +1,23 @@
+sudo: required
+services:
+  - docker
+
+before_install:
+  - docker build -t camullen/docker-test -f client/Dockerfile.dev ./client
+
+script:
+  - docker run -e CI=true camullen/docker-test npm test -- --coverage
+
+after_success:
+  - docker build -t camullen/multi-client ./client
+  - docker build -t camullen/multi-nginx ./nginx
+  - docker build -t camullen/multi-server ./server
+  - docker build -t camullen/multi-worker ./worker
+  # Login to docker cli
+  #TODO Add >/dev/null 2>&1 to line below
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
+  # Take images and push to docker hub
+  - docker push camullen/multi-client
+  - docker push camullen/multi-nginx
+  - docker push camullen/multi-server
+  - docker push camullen/multi-worker
