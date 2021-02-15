@@ -24,7 +24,7 @@
     },
     {
       "name": "nginx",
-      "image": "camullen/multi-nginx",
+      "image": "nginx",
       "hostname": "nginx",
       "essential": true,
       "memory": 128,
